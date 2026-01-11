@@ -1462,6 +1462,7 @@ docker exec dianping-user-rpc ping redis
     - 自动化构建
     - 自动化测试
     - 容器化部署
+    - Dependabot 依赖自动更新
 
 #### 📊 可观测性
 
@@ -1848,6 +1849,7 @@ git push origin feature/your-feature-name
 - [x] Docker Compose 一键部署
 - [x] 分布式追踪和监控
 - [x] 完整文档
+- [x] Dependabot 自动依赖更新
 
 ### v2.0 (计划中)
 
