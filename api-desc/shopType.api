@@ -1,0 +1,41 @@
+syntax = "v1"
+
+info (
+	title:   "ShopType Service API"
+	desc:    "Shop type query service"
+	author:  "converted from ShopTypeController"
+	email:   "your-email@example.com"
+	version: "v1.0"
+)
+
+type (
+	// ShopType 商铺类型结构体
+	ShopType {
+		Id   int64  `json:"id"`
+		Name string `json:"name"`
+		Icon string `json:"icon"`
+		Sort int    `json:"sort"`
+	}
+)
+
+type (
+	// 查询商铺类型列表请求
+	queryTypeListReq  {}
+	queryTypeListRsp {
+		Success bool       `json:"success"`
+		ErrMsg  string     `json:"errMsg,omitempty"`
+		Data    []ShopType `json:"data,omitempty"`
+	}
+)
+
+// 不需要登录的商铺类型接口（公开查询）
+@server (
+	group:      shopType
+	timeout:    3s
+	middleware: RefreshTokenMiddleware
+)
+service dianping-api {
+	@handler queryTypeListHandler
+	get /shop-type/list (queryTypeListReq) returns (queryTypeListRsp)
+}
+

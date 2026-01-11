@@ -1,0 +1,48 @@
+Name: order.rpc
+ListenOn: 0.0.0.0:8004
+
+Etcd:
+  Hosts:
+    - etcd:2379
+  Key: order.rpc
+
+Mysql:
+  DataSource: root:root@tcp(mysql:3306)/hmdp?charset=utf8mb4&parseTime=true&loc=Local
+
+Redis:
+  Key: order.rpc
+  Host: redis:6379
+  Type: node
+  Pass: ""
+
+Cache:
+  - Host: redis:6379
+    Type: node
+    Pass: ""
+
+# RPC Client Configuration
+VoucherRpc:
+  Etcd:
+    Hosts:
+      - etcd:2379
+    Key: voucher.rpc
+
+# Telemetry Configuration
+Telemetry:
+  Name: order.rpc
+  Endpoint: http://jaeger:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
+# Prometheus Metrics
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9004
+  Path: /metrics
+
+# Log Configuration
+Log:
+  ServiceName: order.rpc
+  Mode: console
+  Level: info
+  Encoding: json

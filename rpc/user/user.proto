@@ -1,0 +1,174 @@
+syntax = "proto3";
+
+package user;
+option go_package = "./pb";
+
+// User Service Definition
+service User {
+  // Get user by ID
+  rpc GetUser(GetUserReq) returns (GetUserResp);
+
+  // Get user info by ID
+  rpc GetUserInfo(GetUserInfoReq) returns (GetUserInfoResp);
+
+  // Create or update user
+  rpc SaveUser(SaveUserReq) returns (SaveUserResp);
+
+  // Send verification code
+  rpc SendCode(SendCodeReq) returns (SendCodeResp);
+
+  // User login
+  rpc Login(LoginReq) returns (LoginResp);
+
+  // Get current user info
+  rpc GetMe(GetMeReq) returns (GetMeResp);
+
+  // User sign in
+  rpc SignIn(SignInReq) returns (SignInResp);
+
+  // Get sign in count
+  rpc GetSignCount(GetSignCountReq) returns (GetSignCountResp);
+
+  // Follow user
+  rpc FollowUser(FollowUserReq) returns (FollowUserResp);
+
+  // Unfollow user
+  rpc UnfollowUser(UnfollowUserReq) returns (UnfollowUserResp);
+
+  // Check if following
+  rpc IsFollowing(IsFollowingReq) returns (IsFollowingResp);
+
+  // Get common follows
+  rpc GetCommonFollows(GetCommonFollowsReq) returns (GetCommonFollowsResp);
+}
+
+// Messages
+message UserInfo {
+  int64 id = 1;
+  string phone = 2;
+  string nick_name = 3;
+  string icon = 4;
+  string create_time = 5;
+  string update_time = 6;
+}
+
+message UserDetailInfo {
+  int64 user_id = 1;
+  string city = 2;
+  string introduce = 3;
+  int32 fans = 4;
+  int32 followee = 5;
+  int32 gender = 6;
+  string birthday = 7;
+  int32 credits = 8;
+  int32 level = 9;
+}
+
+message GetUserReq {
+  int64 user_id = 1;
+}
+
+message GetUserResp {
+  UserInfo user = 1;
+}
+
+message GetUserInfoReq {
+  int64 user_id = 1;
+}
+
+message GetUserInfoResp {
+  UserInfo user = 1;
+  UserDetailInfo user_info = 2;
+}
+
+message SaveUserReq {
+  string phone = 1;
+  string nick_name = 2;
+  string icon = 3;
+}
+
+message SaveUserResp {
+  int64 user_id = 1;
+}
+
+message SignInReq {
+  int64 user_id = 1;
+}
+
+message SignInResp {
+  bool success = 1;
+  int32 sign_count = 2;
+}
+
+message GetSignCountReq {
+  int64 user_id = 1;
+}
+
+message GetSignCountResp {
+  int32 count = 1;
+}
+
+message FollowUserReq {
+  int64 user_id = 1;
+  int64 follow_user_id = 2;
+}
+
+message FollowUserResp {
+  bool success = 1;
+}
+
+message UnfollowUserReq {
+  int64 user_id = 1;
+  int64 follow_user_id = 2;
+}
+
+message UnfollowUserResp {
+  bool success = 1;
+}
+
+message IsFollowingReq {
+  int64 user_id = 1;
+  int64 target_user_id = 2;
+}
+
+message IsFollowingResp {
+  bool is_following = 1;
+}
+
+message GetCommonFollowsReq {
+  int64 user_id = 1;
+  int64 target_user_id = 2;
+}
+
+message GetCommonFollowsResp {
+  repeated UserInfo users = 1;
+}
+
+message SendCodeReq {
+  string phone = 1;
+}
+
+message SendCodeResp {
+  bool success = 1;
+  string message = 2;
+}
+
+message LoginReq {
+  string phone = 1;
+  string code = 2;
+}
+
+message LoginResp {
+  bool success = 1;
+  string token = 2;
+  string message = 3;
+}
+
+message GetMeReq {
+  int64 user_id = 1;
+}
+
+message GetMeResp {
+  UserInfo user = 1;
+  UserDetailInfo user_info = 2;
+}

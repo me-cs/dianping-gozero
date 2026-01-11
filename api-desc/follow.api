@@ -1,0 +1,64 @@
+syntax = "v1"
+
+info (
+	title:   "Follow Service API"
+	desc:    "User follow and relationship service"
+	author:  "converted from FollowController"
+	email:   "your-email@example.com"
+	version: "v1.0"
+)
+
+type (
+	// 关注或取关请求
+	followReq {
+		Id       int64 `path:"id"`
+		IsFollow bool  `path:"isFollow"`
+	}
+	followRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+	}
+)
+
+type (
+	// 判断是否关注请求
+	isFollowReq {
+		Id int64 `path:"id"`
+	}
+	isFollowRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    bool   `json:"data,omitempty"`
+	}
+)
+
+type (
+	// 查询共同关注请求
+	followCommonsReq {
+		Id int64 `path:"id"`
+	}
+	followCommonsRsp {
+		Success bool        `json:"success"`
+		ErrMsg  string      `json:"errMsg,omitempty"`
+		Data    interface{} `json:"data,omitempty"` // user list
+	}
+)
+
+// 需要登录的关注接口（所有关注操作都需要登录）
+@server (
+	jwt:        JwtAuth
+	group:      follow
+	timeout:    3s
+	middleware: RefreshTokenMiddleware,AuthMiddleware
+)
+service dianping-api {
+	@handler followHandler
+	put /follow/:id/:isFollow (followReq) returns (followRsp)
+
+	@handler isFollowHandler
+	get /follow/or/not/:id (isFollowReq) returns (isFollowRsp)
+
+	@handler followCommonsHandler
+	get /follow/common/:id (followCommonsReq) returns (followCommonsRsp)
+}
+

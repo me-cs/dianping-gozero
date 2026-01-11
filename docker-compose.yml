@@ -1,0 +1,321 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: dianping-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: hmdp
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - ${DATA_DIR:-/var/lib/dianping}/mysql:/var/lib/mysql
+      - ./deploy/mysql/init:/docker-entrypoint-initdb.d
+      - ./deploy/mysql/conf:/etc/mysql/conf.d
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - dianping-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: dianping-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ${DATA_DIR:-/var/lib/dianping}/redis:/data
+    command: redis-server --appendonly yes
+    networks:
+      - dianping-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # etcd for Service Discovery
+  etcd:
+    image: bitnami/etcd:latest
+    container_name: dianping-etcd
+    restart: always
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+    ports:
+      - "2379:2379"
+      - "2380:2380"
+    # Comment out volume for now to avoid permission issues
+    # volumes:
+    #   - ${DATA_DIR:-/var/lib/dianping}/etcd:/bitnami/etcd
+    networks:
+      - dianping-network
+    healthcheck:
+      test: ["CMD", "etcdctl", "--endpoints=http://127.0.0.1:2379", "endpoint", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # Prometheus for Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: dianping-prometheus
+    restart: always
+    user: root
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ${DATA_DIR:-/var/lib/dianping}/prometheus:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - dianping-network
+    depends_on:
+      - mysql
+      - redis
+
+  # Grafana for Visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: dianping-grafana
+    restart: always
+    user: root
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=redis-datasource
+    volumes:
+      - ${DATA_DIR:-/var/lib/dianping}/grafana:/var/lib/grafana
+      - ./deploy/grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - dianping-network
+    depends_on:
+      - prometheus
+
+  # Jaeger for Distributed Tracing
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: dianping-jaeger
+    restart: always
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"  # Jaeger UI
+      - "14268:14268"
+      - "14250:14250"
+      - "9411:9411"
+    volumes:
+      - ${DATA_DIR:-/var/lib/dianping}/jaeger:/badger
+    networks:
+      - dianping-network
+
+  # User RPC Service
+  user-rpc:
+    build:
+      context: .
+      dockerfile: ./rpc/user/Dockerfile
+    container_name: dianping-user-rpc
+    restart: always
+    ports:
+      - "8001:8001"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ETCD_HOST=etcd
+      - ETCD_PORT=2379
+      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+    networks:
+      - dianping-network
+    volumes:
+      - ./rpc/user/etc:/app/etc
+
+  # Shop RPC Service
+  shop-rpc:
+    build:
+      context: .
+      dockerfile: ./rpc/shop/Dockerfile
+    container_name: dianping-shop-rpc
+    restart: always
+    ports:
+      - "8002:8002"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ETCD_HOST=etcd
+      - ETCD_PORT=2379
+      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+    networks:
+      - dianping-network
+    volumes:
+      - ./rpc/shop/etc:/app/etc
+
+  # Voucher RPC Service
+  voucher-rpc:
+    build:
+      context: .
+      dockerfile: ./rpc/voucher/Dockerfile
+    container_name: dianping-voucher-rpc
+    restart: always
+    ports:
+      - "8003:8003"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ETCD_HOST=etcd
+      - ETCD_PORT=2379
+      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+    networks:
+      - dianping-network
+    volumes:
+      - ./rpc/voucher/etc:/app/etc
+
+  # Order RPC Service
+  order-rpc:
+    build:
+      context: .
+      dockerfile: ./rpc/order/Dockerfile
+    container_name: dianping-order-rpc
+    restart: always
+    ports:
+      - "8004:8004"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ETCD_HOST=etcd
+      - ETCD_PORT=2379
+      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+    networks:
+      - dianping-network
+    volumes:
+      - ./rpc/order/etc:/app/etc
+
+  # Blog RPC Service
+  blog-rpc:
+    build:
+      context: .
+      dockerfile: ./rpc/blog/Dockerfile
+    container_name: dianping-blog-rpc
+    restart: always
+    ports:
+      - "8005:8005"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ETCD_HOST=etcd
+      - ETCD_PORT=2379
+      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+    networks:
+      - dianping-network
+    volumes:
+      - ./rpc/blog/etc:/app/etc
+
+  # API Gateway Service
+  api-gateway:
+    build:
+      context: .
+      dockerfile: ./api/Dockerfile
+    container_name: dianping-api
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      - ETCD_HOST=etcd
+      - ETCD_PORT=2379
+      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+    depends_on:
+      - user-rpc
+      - shop-rpc
+      - voucher-rpc
+      - order-rpc
+      - blog-rpc
+    networks:
+      - dianping-network
+    volumes:
+      - ./api/etc:/app/etc
+
+  # Nginx Frontend Service
+  nginx:
+    build:
+      context: .
+      dockerfile: ./deploy/nginx/Dockerfile
+    container_name: dianping-nginx
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - dianping-network
+
+networks:
+  dianping-network:
+    driver: bridge
+

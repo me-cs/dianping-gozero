@@ -1,0 +1,108 @@
+syntax = "proto3";
+
+package voucher;
+option go_package = "./pb";
+
+// Voucher Service Definition
+service Voucher {
+  // Add voucher
+  rpc AddVoucher(AddVoucherReq) returns (AddVoucherResp);
+
+  // Add seckill voucher
+  rpc AddSeckillVoucher(AddSeckillVoucherReq) returns (AddSeckillVoucherResp);
+
+  // Get voucher by ID
+  rpc GetVoucher(GetVoucherReq) returns (GetVoucherResp);
+
+  // List vouchers by shop
+  rpc ListVouchersByShop(ListVouchersByShopReq) returns (ListVouchersByShopResp);
+
+  // Check voucher stock
+  rpc CheckVoucherStock(CheckVoucherStockReq) returns (CheckVoucherStockResp);
+
+  // Deduct voucher stock
+  rpc DeductVoucherStock(DeductVoucherStockReq) returns (DeductVoucherStockResp);
+}
+
+// Messages
+message VoucherInfo {
+  int64 id = 1;
+  int64 shop_id = 2;
+  string title = 3;
+  string sub_title = 4;
+  string rules = 5;
+  int64 pay_value = 6;
+  int64 actual_value = 7;
+  int32 type = 8;
+  int32 status = 9;
+  string create_time = 10;
+  string update_time = 11;
+}
+
+message SeckillVoucherInfo {
+  int64 voucher_id = 1;
+  int32 stock = 2;
+  string begin_time = 3;
+  string end_time = 4;
+  string create_time = 5;
+  string update_time = 6;
+}
+
+message AddVoucherReq {
+  int64 shop_id = 1;
+  string title = 2;
+  string sub_title = 3;
+  string rules = 4;
+  int64 pay_value = 5;
+  int64 actual_value = 6;
+  int32 type = 7;
+}
+
+message AddVoucherResp {
+  int64 voucher_id = 1;
+}
+
+message AddSeckillVoucherReq {
+  int64 voucher_id = 1;
+  int32 stock = 2;
+  string begin_time = 3;
+  string end_time = 4;
+}
+
+message AddSeckillVoucherResp {
+  bool success = 1;
+}
+
+message GetVoucherReq {
+  int64 voucher_id = 1;
+}
+
+message GetVoucherResp {
+  VoucherInfo voucher = 1;
+  SeckillVoucherInfo seckill_voucher = 2;
+}
+
+message ListVouchersByShopReq {
+  int64 shop_id = 1;
+}
+
+message ListVouchersByShopResp {
+  repeated VoucherInfo vouchers = 1;
+}
+
+message CheckVoucherStockReq {
+  int64 voucher_id = 1;
+}
+
+message CheckVoucherStockResp {
+  bool has_stock = 1;
+  int32 stock = 2;
+}
+
+message DeductVoucherStockReq {
+  int64 voucher_id = 1;
+}
+
+message DeductVoucherStockResp {
+  bool success = 1;
+}

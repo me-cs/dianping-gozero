@@ -1,0 +1,45 @@
+Name: user.rpc
+ListenOn: 0.0.0.0:8001
+
+JwtAuth:
+  AccessSecret: zt2Ddpqzwg8hERYMe2llwy1Jg2PF4CuOacu9IG2zkuoeZHaEILe6G1y6MqhhXUqm
+  AccessExpire: 864000
+
+Etcd:
+  Hosts:
+    - etcd:2379
+  Key: user.rpc
+
+Mysql:
+  DataSource: root:root@tcp(mysql:3306)/hmdp?charset=utf8mb4&parseTime=true&loc=Local
+
+Redis:
+  Key:  user.rpc
+  Host: redis:6379
+  Type: node
+  Pass: ""
+
+Cache:
+  - Host: redis:6379
+    Type: node
+    Pass: ""
+
+# Telemetry Configuration
+Telemetry:
+  Name: user.rpc
+  Endpoint: http://jaeger:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
+# Prometheus Metrics
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9001
+  Path: /metrics
+
+# Log Configuration
+Log:
+  ServiceName: user.rpc
+  Mode: console
+  Level: info
+  Encoding: json

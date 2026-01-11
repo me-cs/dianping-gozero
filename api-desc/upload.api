@@ -1,0 +1,47 @@
+syntax = "v1"
+
+info (
+	title:   "Upload Service API"
+	desc:    "File upload and management service"
+	author:  "converted from UploadController"
+	email:   "your-email@example.com"
+	version: "v1.0"
+)
+
+type (
+	// 上传图片请求
+	uploadImageReq {
+		File string `form:"file"` // multipart file
+	}
+	uploadImageRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    string `json:"data,omitempty"` // file name
+	}
+)
+
+type (
+	// 删除博客图片请求
+	deleteBlogImgReq {
+		Name string `form:"name"`
+	}
+	deleteBlogImgRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+	}
+)
+
+// 需要登录的上传接口（所有文件上传操作都需要登录）
+@server (
+	group:      upload
+	timeout:    3s
+	middleware: RefreshTokenMiddleware
+)
+service dianping-api {
+	@handler uploadImageHandler
+	post /upload/blog (uploadImageReq) returns (uploadImageRsp)
+
+	@handler deleteBlogImgHandler
+	get /upload/blog/delete (deleteBlogImgReq) returns (deleteBlogImgRsp)
+}
+

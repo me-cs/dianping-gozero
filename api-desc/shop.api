@@ -1,0 +1,150 @@
+syntax = "v1"
+
+info (
+	title:   "Shop Service API"
+	desc:    "Shop management and query service"
+	author:  "converted from ShopController"
+	email:   "your-email@example.com"
+	version: "v1.0"
+)
+
+type (
+	// Shop 商铺信息结构体
+	Shop {
+		Id         int64   `json:"id"`
+		Name       string  `json:"name"`
+		TypeId     int64   `json:"typeId"`
+		Images     string  `json:"images"`
+		Area       string  `json:"area"`
+		Address    string  `json:"address"`
+		X          float64 `json:"x"`
+		Y          float64 `json:"y"`
+		AvgPrice   int64   `json:"avgPrice"`
+		Sold       int     `json:"sold"`
+		Comments   int     `json:"comments"`
+		Score      int     `json:"score"`
+		OpenHours  string  `json:"openHours"`
+		CreateTime string  `json:"createTime"`
+		UpdateTime string  `json:"updateTime"`
+		Distance   float64 `json:"distance,omitempty"`
+	}
+)
+
+type (
+	// 根据id查询商铺请求
+	queryShopByIdReq {
+		Id int64 `path:"id"`
+	}
+	queryShopByIdRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    *Shop  `json:"data,omitempty"`
+	}
+)
+
+type (
+	// 新增商铺请求
+	saveShopReq {
+		Name      string  `json:"name"`
+		TypeId    int64   `json:"typeId"`
+		Images    string  `json:"images"`
+		Area      string  `json:"area"`
+		Address   string  `json:"address"`
+		X         float64 `json:"x"`
+		Y         float64 `json:"y"`
+		AvgPrice  int64   `json:"avgPrice"`
+		Sold      int     `json:"sold"`
+		Comments  int     `json:"comments"`
+		Score     int     `json:"score"`
+		OpenHours string  `json:"openHours"`
+	}
+	saveShopRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    int64  `json:"data,omitempty"` // shop id
+	}
+)
+
+type (
+	// 更新商铺请求
+	updateShopReq {
+		Id        int64   `json:"id"`
+		Name      string  `json:"name,omitempty"`
+		TypeId    int64   `json:"typeId,omitempty"`
+		Images    string  `json:"images,omitempty"`
+		Area      string  `json:"area,omitempty"`
+		Address   string  `json:"address,omitempty"`
+		X         float64 `json:"x,omitempty"`
+		Y         float64 `json:"y,omitempty"`
+		AvgPrice  int64   `json:"avgPrice,omitempty"`
+		Sold      int     `json:"sold,omitempty"`
+		Comments  int     `json:"comments,omitempty"`
+		Score     int     `json:"score,omitempty"`
+		OpenHours string  `json:"openHours,omitempty"`
+	}
+	updateShopRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+	}
+)
+
+type (
+	// 根据商铺类型分页查询商铺请求
+	queryShopByTypeReq {
+		TypeId  int64   `form:"typeId"`
+		Current int64   `form:"current,default=1"`
+		X       float64 `form:"x,optional"`
+		Y       float64 `form:"y,optional"`
+	}
+	queryShopByTypeRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    []Shop `json:"data,omitempty"`
+	}
+)
+
+type (
+	// 根据商铺名称分页查询商铺请求
+	queryShopByNameReq {
+		Name    string `form:"name,optional"`
+		Current int64  `form:"current,default=1"`
+	}
+	queryShopByNameRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    []Shop `json:"data,omitempty"`
+	}
+)
+
+// 不需要登录的商铺接口（公开查询）
+@server (
+	group:      shop
+	timeout:    3s
+	middleware: RefreshTokenMiddleware
+)
+service dianping-api {
+	@handler queryShopByIdHandler
+	get /shop/:id (queryShopByIdReq) returns (queryShopByIdRsp)
+
+	@handler queryShopByTypeHandler
+	get /shop/of/type (queryShopByTypeReq) returns (queryShopByTypeRsp)
+
+	@handler queryShopByNameHandler
+	get /shop/of/name (queryShopByNameReq) returns (queryShopByNameRsp)
+}
+
+// 需要登录的商铺接口（管理操作）
+@server (
+	jwt:        JwtAuth
+	group:      shop
+	timeout:    3s
+	middleware: RefreshTokenMiddleware,AuthMiddleware
+)
+service dianping-api {
+	@handler saveShopHandler
+	post /shop (saveShopReq) returns (saveShopRsp)
+
+	@handler updateShopHandler
+	put /shop (updateShopReq) returns (updateShopRsp)
+}
+

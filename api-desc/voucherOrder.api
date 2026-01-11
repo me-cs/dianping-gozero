@@ -1,0 +1,34 @@
+syntax = "v1"
+
+info (
+	title:   "VoucherOrder Service API"
+	desc:    "Voucher order and seckill service"
+	author:  "converted from VoucherOrderController"
+	email:   "your-email@example.com"
+	version: "v1.0"
+)
+
+type (
+	// 秒杀优惠券请求
+	seckillVoucherReq {
+		Id int64 `path:"id"`
+	}
+	seckillVoucherRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    int64  `json:"data,omitempty"` // order id
+	}
+)
+
+// 需要登录的优惠券订单接口（所有订单操作都需要登录）
+@server (
+	jwt:        JwtAuth
+	group:      voucherOrder
+	timeout:    3s
+	middleware: RefreshTokenMiddleware,AuthMiddleware
+)
+service dianping-api {
+	@handler seckillVoucherHandler
+	post /voucher-order/seckill/:id (seckillVoucherReq) returns (seckillVoucherRsp)
+}
+

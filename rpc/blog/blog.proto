@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+package blog;
+option go_package = "./pb";
+
+// Blog Service Definition
+service Blog {
+  // Create blog
+  rpc CreateBlog(CreateBlogReq) returns (CreateBlogResp);
+
+  // Get blog by ID
+  rpc GetBlog(GetBlogReq) returns (GetBlogResp);
+
+  // Like blog
+  rpc LikeBlog(LikeBlogReq) returns (LikeBlogResp);
+
+  // Get blog likes
+  rpc GetBlogLikes(GetBlogLikesReq) returns (GetBlogLikesResp);
+
+  // Query hot blogs
+  rpc QueryHotBlogs(QueryHotBlogsReq) returns (QueryHotBlogsResp);
+
+  // Query blogs by user
+  rpc QueryBlogsByUser(QueryBlogsByUserReq) returns (QueryBlogsByUserResp);
+
+  // Query blogs of following users
+  rpc QueryBlogsOfFollow(QueryBlogsOfFollowReq) returns (QueryBlogsOfFollowResp);
+}
+
+// Messages
+message BlogInfo {
+  int64 id = 1;
+  int64 shop_id = 2;
+  int64 user_id = 3;
+  string title = 4;
+  string images = 5;
+  string content = 6;
+  int32 liked = 7;
+  int32 comments = 8;
+  string create_time = 9;
+  string update_time = 10;
+  string icon = 11;
+  string name = 12;
+  bool is_like = 13;
+}
+
+message CreateBlogReq {
+  int64 shop_id = 1;
+  int64 user_id = 2;
+  string title = 3;
+  string images = 4;
+  string content = 5;
+}
+
+message CreateBlogResp {
+  int64 blog_id = 1;
+}
+
+message GetBlogReq {
+  int64 blog_id = 1;
+  int64 user_id = 2;
+}
+
+message GetBlogResp {
+  BlogInfo blog = 1;
+}
+
+message LikeBlogReq {
+  int64 blog_id = 1;
+  int64 user_id = 2;
+}
+
+message LikeBlogResp {
+  bool success = 1;
+}
+
+message GetBlogLikesReq {
+  int64 blog_id = 1;
+}
+
+message GetBlogLikesResp {
+  repeated int64 user_ids = 1;
+}
+
+message QueryHotBlogsReq {
+  int32 current = 1;
+}
+
+message QueryHotBlogsResp {
+  repeated BlogInfo blogs = 1;
+}
+
+message QueryBlogsByUserReq {
+  int64 user_id = 1;
+  int32 current = 2;
+}
+
+message QueryBlogsByUserResp {
+  repeated BlogInfo blogs = 1;
+}
+
+message QueryBlogsOfFollowReq {
+  int64 user_id = 1;
+  int64 last_id = 2;
+  int64 offset = 3;
+}
+
+message QueryBlogsOfFollowResp {
+  repeated BlogInfo blogs = 1;
+  int64 min_time = 2;
+  int64 offset = 3;
+}

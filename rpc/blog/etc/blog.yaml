@@ -1,0 +1,41 @@
+Name: blog.rpc
+ListenOn: 0.0.0.0:8005
+
+Etcd:
+  Hosts:
+    - etcd:2379
+  Key: blog.rpc
+
+Mysql:
+  DataSource: root:root@tcp(mysql:3306)/hmdp?charset=utf8mb4&parseTime=true&loc=Local
+
+Redis:
+  Key: blog.rpc
+  Host: redis:6379
+  Type: node
+  Pass: ""
+
+Cache:
+  - Host: redis:6379
+    Type: node
+    Pass: ""
+
+# Telemetry Configuration
+Telemetry:
+  Name: blog.rpc
+  Endpoint: http://jaeger:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
+# Prometheus Metrics
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9005
+  Path: /metrics
+
+# Log Configuration
+Log:
+  ServiceName: blog.rpc
+  Mode: console
+  Level: info
+  Encoding: json

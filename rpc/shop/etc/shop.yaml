@@ -1,0 +1,41 @@
+Name: shop.rpc
+ListenOn: 0.0.0.0:8002
+
+Etcd:
+  Hosts:
+    - etcd:2379
+  Key: shop.rpc
+
+Mysql:
+  DataSource: root:root@tcp(mysql:3306)/hmdp?charset=utf8mb4&parseTime=true&loc=Local
+
+Redis:
+  Key: shop.rpc
+  Host: redis:6379
+  Type: node
+  Pass: ""
+
+Cache:
+  - Host: redis:6379
+    Type: node
+    Pass: ""
+
+# Telemetry Configuration
+Telemetry:
+  Name: shop.rpc
+  Endpoint: http://jaeger:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
+# Prometheus Metrics
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9002
+  Path: /metrics
+
+# Log Configuration
+Log:
+  ServiceName: shop.rpc
+  Mode: console
+  Level: info
+  Encoding: json

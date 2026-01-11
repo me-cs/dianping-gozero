@@ -1,0 +1,76 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'dianping'
+    environment: 'production'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Load rules once and periodically evaluate them
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # MySQL Exporter
+  - job_name: 'mysql'
+    static_configs:
+      - targets: ['mysql:3306']
+    metrics_path: '/metrics'
+
+  # Redis Exporter
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+
+  # etcd
+  - job_name: 'etcd'
+    static_configs:
+      - targets: ['etcd:2379']
+
+  # API Gateway
+  - job_name: 'api-gateway'
+    static_configs:
+      - targets: ['api-gateway:8081']
+    metrics_path: '/metrics'
+
+  # User RPC Service
+  - job_name: 'user-rpc'
+    static_configs:
+      - targets: ['user-rpc:8001']
+    metrics_path: '/metrics'
+
+  # Shop RPC Service
+  - job_name: 'shop-rpc'
+    static_configs:
+      - targets: ['shop-rpc:8002']
+    metrics_path: '/metrics'
+
+  # Voucher RPC Service
+  - job_name: 'voucher-rpc'
+    static_configs:
+      - targets: ['voucher-rpc:8003']
+    metrics_path: '/metrics'
+
+  # Order RPC Service
+  - job_name: 'order-rpc'
+    static_configs:
+      - targets: ['order-rpc:8004']
+    metrics_path: '/metrics'
+
+  # Jaeger
+  - job_name: 'jaeger'
+    static_configs:
+      - targets: ['jaeger:14269']
+    metrics_path: '/metrics'

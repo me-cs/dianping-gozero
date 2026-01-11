@@ -1,0 +1,154 @@
+syntax = "v1"
+
+info (
+	title:   "User Service API"
+	desc:    "User authentication and sign-in service"
+	author:  "converted from UserServiceImpl"
+	email:   "your-email@example.com"
+	version: "v1.0"
+)
+
+type (
+	// 发送验证码请求
+	sendCodeReq {
+		Phone string `form:"phone"`
+	}
+	sendCodeRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    string `json:"data,omitempty"`
+	}
+)
+
+type (
+	// 登录请求
+	loginReq {
+		Phone string `json:"phone"`
+		Code  string `json:"code"`
+	}
+	loginRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    string `json:"data,omitempty"` // token
+	}
+)
+
+type (
+	// 签到请求
+	signReq  {}
+	signRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+	}
+)
+
+type (
+	// 签到统计请求
+	signCountReq  {}
+	signCountRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    int    `json:"data,omitempty"` // 连续签到天数
+	}
+)
+
+type (
+	UserInfo {
+		Id       int64  `json:"id"`
+		Phone    string `json:"phone"`
+		NickName string `json:"nickname"`
+		Icon     string `json:"icon"`
+	}
+	getMeReq  {}
+	getMeRsp {
+		Success bool      `json:"success"`
+		ErrMsg  string    `json:"errMsg,omitempty"`
+		Data    *UserInfo `json:"data,omitempty"`
+	}
+)
+
+type (
+	// 登出请求
+	logoutReq  {}
+	logoutRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+	}
+)
+
+type (
+	// 获取用户详细信息请求
+	getUserInfoReq {
+		UserId int64 `path:"id"`
+	}
+	UserDetailInfo {
+		Id        int64  `json:"id,omitempty"`
+		City      string `json:"city,omitempty"`
+		Introduce string `json:"introduce,omitempty"`
+		Fans      int    `json:"fans,omitempty"`
+		Followee  int    `json:"followee,omitempty"`
+		Gender    int    `json:"gender,omitempty"`
+		Birthday  string `json:"birthday,omitempty"`
+		Credits   int    `json:"credits,omitempty"`
+		Level     int    `json:"level,omitempty"`
+	}
+	getUserInfoRsp {
+		Success bool            `json:"success"`
+		ErrMsg  string          `json:"errMsg,omitempty"`
+		Data    *UserDetailInfo `json:"data,omitempty"`
+	}
+)
+
+type (
+	// 根据ID查询用户请求
+	queryUserByIdReq {
+		UserId int64 `path:"id"`
+	}
+	queryUserByIdRsp {
+		Success bool      `json:"success"`
+		ErrMsg  string    `json:"errMsg,omitempty"`
+		Data    *UserInfo `json:"data,omitempty"`
+	}
+)
+
+// 不需要登录的用户接口
+@server (
+	group:      user
+	timeout:    3s
+	middleware: RefreshTokenMiddleware
+)
+service dianping-api {
+	@handler sendCodeHandler
+	post /user/code (sendCodeReq) returns (sendCodeRsp)
+
+	@handler loginHandler
+	post /user/login (loginReq) returns (loginRsp)
+}
+
+// 需要登录的用户接口
+@server (
+	jwt:        JwtAuth
+	group:      user
+	timeout:    3s
+	middleware: RefreshTokenMiddleware,AuthMiddleware
+)
+service dianping-api {
+	@handler signHandler
+	post /user/sign (signReq) returns (signRsp)
+
+	@handler signCountHandler
+	get /user/sign/count (signCountReq) returns (signCountRsp)
+
+	@handler getMeHandler
+	get /user/me (getMeReq) returns (getMeRsp)
+
+	@handler logoutHandler
+	post /user/logout (logoutReq) returns (logoutRsp)
+
+	@handler getUserInfoHandler
+	get /user/info/:id (getUserInfoReq) returns (getUserInfoRsp)
+
+	@handler queryUserByIdHandler
+	get /user/:id (queryUserByIdReq) returns (queryUserByIdRsp)
+}
+

@@ -1,0 +1,170 @@
+syntax = "v1"
+
+info (
+	title:   "Blog Service API"
+	desc:    "Blog management and interaction service"
+	author:  "converted from BlogController"
+	email:   "your-email@example.com"
+	version: "v1.0"
+)
+
+type (
+	// Blog 博客信息结构体
+	Blog {
+		Id         int64  `json:"id"`
+		ShopId     int64  `json:"shopId"`
+		UserId     int64  `json:"userId"`
+		Title      string `json:"title"`
+		Images     string `json:"images"`
+		Content    string `json:"content"`
+		Liked      int    `json:"liked"`
+		Comments   int    `json:"comments"`
+		CreateTime string `json:"createTime"`
+		UpdateTime string `json:"updateTime"`
+		Icon       string `json:"icon,omitempty"`
+		Name       string `json:"name,omitempty"`
+		IsLike     bool   `json:"isLike,omitempty"`
+	}
+)
+
+type (
+	// 保存博客请求
+	saveBlogReq {
+		ShopId  int64  `json:"shopId,optional"`
+		Title   string `json:"title,optional"`
+		Images  string `json:"images,optional"`
+		Content string `json:"content,optional"`
+	}
+	saveBlogRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    int64  `json:"data,omitempty"` // blog id
+	}
+)
+
+type (
+	// 点赞博客请求
+	likeBlogReq {
+		Id int64 `path:"id"`
+	}
+	likeBlogRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+	}
+)
+
+type (
+	// 查询我的博客请求
+	queryMyBlogReq {
+		Current int64 `form:"current,default=1"`
+	}
+	queryMyBlogRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    []Blog `json:"data,omitempty"`
+	}
+)
+
+type (
+	// 查询热门博客请求
+	queryHotBlogReq {
+		Current int64 `form:"current,default=1"`
+	}
+	queryHotBlogRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    []Blog `json:"data,omitempty"`
+	}
+)
+
+type (
+	// 根据id查询博客请求
+	queryBlogByIdReq {
+		Id int64 `path:"id"`
+	}
+	queryBlogByIdRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    *Blog  `json:"data,omitempty"`
+	}
+)
+
+type (
+	// 查询博客点赞列表请求
+	queryBlogLikesReq {
+		Id int64 `path:"id"`
+	}
+	queryBlogLikesRsp {
+		Success bool        `json:"success"`
+		ErrMsg  string      `json:"errMsg,omitempty"`
+		Data    interface{} `json:"data,omitempty"` // user list
+	}
+)
+
+type (
+	// 根据用户id查询博客请求
+	queryBlogByUserIdReq {
+		Current int64 `form:"current,default=1"`
+		Id      int64 `form:"id"`
+	}
+	queryBlogByUserIdRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    []Blog `json:"data,omitempty"`
+	}
+)
+
+type (
+	// 查询关注的博客请求
+	queryBlogOfFollowReq {
+		LastId int64 `form:"lastId"`
+		Offset int64 `form:"offset,default=0"`
+	}
+	queryBlogOfFollowRsp {
+		Success bool        `json:"success"`
+		ErrMsg  string      `json:"errMsg,omitempty"`
+		Data    interface{} `json:"data,omitempty"`
+	}
+)
+
+// 不需要登录的博客接口（公开访问）
+@server (
+	group:      blog
+	timeout:    3s
+	middleware: RefreshTokenMiddleware
+)
+service dianping-api {
+	@handler queryHotBlogHandler
+	get /blog/hot (queryHotBlogReq) returns (queryHotBlogRsp)
+}
+
+// 需要登录的博客接口
+@server (
+	jwt:        JwtAuth
+	group:      blog
+	timeout:    3s
+	middleware: RefreshTokenMiddleware,AuthMiddleware
+)
+service dianping-api {
+	@handler saveBlogHandler
+	post /blog (saveBlogReq) returns (saveBlogRsp)
+
+	@handler likeBlogHandler
+	put /blog/like/:id (likeBlogReq) returns (likeBlogRsp)
+
+	@handler queryMyBlogHandler
+	get /blog/of/me (queryMyBlogReq) returns (queryMyBlogRsp)
+
+	@handler queryBlogByIdHandler
+	get /blog/:id (queryBlogByIdReq) returns (queryBlogByIdRsp)
+
+	@handler queryBlogLikesHandler
+	get /blog/likes/:id (queryBlogLikesReq) returns (queryBlogLikesRsp)
+
+	@handler queryBlogByUserIdHandler
+	get /blog/of/user (queryBlogByUserIdReq) returns (queryBlogByUserIdRsp)
+
+	@handler queryBlogOfFollowHandler
+	get /blog/of/follow (queryBlogOfFollowReq) returns (queryBlogOfFollowRsp)
+}
+

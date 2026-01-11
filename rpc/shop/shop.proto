@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package shop;
+option go_package = "./pb";
+
+// Shop Service Definition
+service Shop {
+  // Get shop by ID
+  rpc GetShop(GetShopReq) returns (GetShopResp);
+
+  // List shops by type
+  rpc ListShopsByType(ListShopsByTypeReq) returns (ListShopsByTypeResp);
+
+  // Search shops
+  rpc SearchShops(SearchShopsReq) returns (SearchShopsResp);
+
+  // Get shop type by ID
+  rpc GetShopType(GetShopTypeReq) returns (GetShopTypeResp);
+
+  // List all shop types
+  rpc ListShopTypes(ListShopTypesReq) returns (ListShopTypesResp);
+}
+
+// Messages
+message ShopInfo {
+  int64 id = 1;
+  string name = 2;
+  int64 type_id = 3;
+  string images = 4;
+  string area = 5;
+  string address = 6;
+  double x = 7;
+  double y = 8;
+  int64 avg_price = 9;
+  int32 sold = 10;
+  int32 comments = 11;
+  int32 score = 12;
+  string open_hours = 13;
+  string create_time = 14;
+  string update_time = 15;
+  double distance = 16;
+}
+
+message ShopTypeInfo {
+  int64 id = 1;
+  string name = 2;
+  string icon = 3;
+  int32 sort = 4;
+}
+
+message GetShopReq {
+  int64 shop_id = 1;
+}
+
+message GetShopResp {
+  ShopInfo shop = 1;
+}
+
+message ListShopsByTypeReq {
+  int64 type_id = 1;
+  int32 current = 2;
+  double x = 3;
+  double y = 4;
+}
+
+message ListShopsByTypeResp {
+  repeated ShopInfo shops = 1;
+  int64 total = 2;
+}
+
+message SearchShopsReq {
+  string name = 1;
+  int32 current = 2;
+}
+
+message SearchShopsResp {
+  repeated ShopInfo shops = 1;
+  int64 total = 2;
+}
+
+message GetShopTypeReq {
+  int64 type_id = 1;
+}
+
+message GetShopTypeResp {
+  ShopTypeInfo shop_type = 1;
+}
+
+message ListShopTypesReq {}
+
+message ListShopTypesResp {
+  repeated ShopTypeInfo shop_types = 1;
+}

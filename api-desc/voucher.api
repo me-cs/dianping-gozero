@@ -1,0 +1,104 @@
+syntax = "v1"
+
+info (
+	title:   "Voucher Service API"
+	desc:    "Voucher management and query service"
+	author:  "converted from VoucherController"
+	email:   "your-email@example.com"
+	version: "v1.0"
+)
+
+type (
+	// Voucher 优惠券信息结构体
+	Voucher {
+		Id          int64  `json:"id"`
+		ShopId      int64  `json:"shopId"`
+		Title       string `json:"title"`
+		SubTitle    string `json:"subTitle"`
+		Rules       string `json:"rules"`
+		PayValue    int64  `json:"payValue"`
+		ActualValue int64  `json:"actualValue"`
+		Type        int    `json:"type"` // 1=普通券 2=秒杀券
+		Status      int    `json:"status"`
+		Stock       int    `json:"stock,omitempty"`
+		BeginTime   string `json:"beginTime,omitempty"`
+		EndTime     string `json:"endTime,omitempty"`
+		CreateTime  string `json:"createTime"`
+		UpdateTime  string `json:"updateTime"`
+	}
+)
+
+type (
+	// 新增秒杀券请求
+	addSeckillVoucherReq {
+		ShopId      int64  `json:"shopId"`
+		Title       string `json:"title"`
+		SubTitle    string `json:"subTitle"`
+		Rules       string `json:"rules"`
+		PayValue    int64  `json:"payValue"`
+		ActualValue int64  `json:"actualValue"`
+		Stock       int    `json:"stock"`
+		BeginTime   string `json:"beginTime"`
+		EndTime     string `json:"endTime"`
+	}
+	addSeckillVoucherRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    int64  `json:"data,omitempty"` // voucher id
+	}
+)
+
+type (
+	// 新增普通券请求
+	addVoucherReq {
+		ShopId      int64  `json:"shopId"`
+		Title       string `json:"title"`
+		SubTitle    string `json:"subTitle"`
+		Rules       string `json:"rules"`
+		PayValue    int64  `json:"payValue"`
+		ActualValue int64  `json:"actualValue"`
+	}
+	addVoucherRsp {
+		Success bool   `json:"success"`
+		ErrMsg  string `json:"errMsg,omitempty"`
+		Data    int64  `json:"data,omitempty"` // voucher id
+	}
+)
+
+type (
+	// 查询店铺优惠券列表请求
+	queryVoucherOfShopReq {
+		ShopId int64 `path:"shopId"`
+	}
+	queryVoucherOfShopRsp {
+		Success bool      `json:"success"`
+		ErrMsg  string    `json:"errMsg,omitempty"`
+		Data    []Voucher `json:"data,omitempty"`
+	}
+)
+
+// 不需要登录的优惠券接口（公开查询）
+@server (
+	group:      voucher
+	timeout:    3s
+	middleware: RefreshTokenMiddleware
+)
+service dianping-api {
+	@handler queryVoucherOfShopHandler
+	get /voucher/list/:shopId (queryVoucherOfShopReq) returns (queryVoucherOfShopRsp)
+}
+
+// 需要登录的优惠券接口（管理操作）
+@server (
+	group:      voucher
+	timeout:    3s
+	middleware: RefreshTokenMiddleware
+)
+service dianping-api {
+	@handler addSeckillVoucherHandler
+	post /voucher/seckill (addSeckillVoucherReq) returns (addSeckillVoucherRsp)
+
+	@handler addVoucherHandler
+	post /voucher (addVoucherReq) returns (addVoucherRsp)
+}
+
