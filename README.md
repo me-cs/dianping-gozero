@@ -939,7 +939,7 @@ curl http://localhost:8081/health
 
 | 服务 | 地址 | 说明 |
 |------|------|------|
-| **Nginx** | http://localhost:80 | 反向代理（如已配置） |
+| **Nginx** | http://localhost:80 | 反向代理（自动启动） |
 | **API Gateway** | http://localhost:8081 | RESTful API 入口 |
 | **Grafana** | http://localhost:3000 | 监控面板 (admin/admin) |
 | **Prometheus** | http://localhost:9090 | 指标数据 |
@@ -948,7 +948,7 @@ curl http://localhost:8081/health
 | **Redis** | localhost:6379 | 缓存 |
 | **etcd** | localhost:2379 | 服务发现 |
 
-> **提示**：如果配置了 Nginx 反向代理，可以通过 http://localhost 访问 API，Nginx 会自动转发到 API Gateway (8081)
+> **提示**：Nginx 反向代理会自动启动，你可以直接通过 http://localhost 访问 API（默认 80 端口），请求会自动转发到 API Gateway (8081)
 
 ### 测试 API
 
