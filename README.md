@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)
+![Go Version](https://img.shields.io/badge/Go-1.23+-00ADD8?style=flat&logo=go)
 ![go-zero](https://img.shields.io/badge/go--zero-1.9.4-7C3AED?style=flat)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat&logo=mysql)
@@ -75,7 +75,7 @@
 
 | 技术 | 版本 | 用途 |
 |------|------|------|
-| **Go** | 1.21+ | 主要编程语言 |
+| **Go** | 1.23+ | 主要编程语言 |
 | **go-zero** | 1.9.4 | 微服务框架 |
 | **gRPC** | 1.78.0 | RPC 通信协议 |
 | **Protocol Buffers** | 3.0 | 服务接口定义 |
@@ -432,7 +432,7 @@ CREATE TABLE `tb_voucher_order` (
 
 访问 Go 官网下载页面：https://go.dev/dl/
 
-**推荐版本**：Go 1.21 或更高版本
+**推荐版本**：Go 1.23 或更高版本
 
 **选择对应的安装包**：
 - Linux (x86_64): `go1.23.5.linux-amd64.tar.gz`
@@ -821,7 +821,7 @@ xcode-select --install
 
 ```bash
 # ✅ Go 环境
-go version                    # 应显示 go1.21+
+go version                    # 应显示 go1.23+
 go env GOPROXY                # 应显示 https://goproxy.cn,direct
 
 # ✅ Docker 环境
@@ -906,14 +906,14 @@ sudo docker ps
 - ✅ **操作系统**：Linux / macOS / Windows (WSL2)
 - ✅ **Docker**：20.10+
 - ✅ **Docker Compose**：2.0+
-- ✅ **Go**：1.21+ （本地开发）
+- ✅ **Go**：1.23+ （本地开发）
 - ✅ **Git**：任意版本
 
 ### 一键启动（推荐）
 
 ```bash
 # 1. 克隆项目
-git clone https://github.com/yourusername/dianping-gozero.git
+git clone https://github.com/me-cs/dianping-gozero.git
 cd dianping-gozero/backend
 
 # 2. 启动所有服务（会自动下载镜像、构建、启动）
@@ -1019,7 +1019,7 @@ sudo systemctl restart docker
 #### 3. 克隆并部署
 
 ```bash
-git clone https://github.com/yourusername/dianping-gozero.git
+git clone https://github.com/me-cs/dianping-gozero.git
 cd dianping-gozero/backend
 
 # 设置数据目录
@@ -1087,7 +1087,7 @@ docker stats
 
 ```bash
 # 检查 Go 版本
-go version        # 应为 go1.21+
+go version        # 应为 go1.23+
 
 # 检查 Docker
 docker --version  # 应为 Docker 20.10+
@@ -1113,7 +1113,7 @@ go env GOPROXY    # 应为 https://goproxy.cn,direct
 #### 3. 克隆项目
 
 ```bash
-git clone https://github.com/yourusername/dianping-gozero.git
+git clone https://github.com/me-cs/dianping-gozero.git
 cd dianping-gozero/backend
 
 # 下载依赖
@@ -1814,8 +1814,8 @@ git push origin feature/your-feature-name
 
 ### 交流讨论
 
-- **GitHub Issues**: [提问题/建议](https://github.com/yourusername/dianping-gozero/issues)
-- **GitHub Discussions**: [讨论区](https://github.com/yourusername/dianping-gozero/discussions)
+- **GitHub Issues**: [提问题/建议](https://github.com/me-cs/dianping-gozero/issues)
+- **GitHub Discussions**: [讨论区](https://github.com/me-cs/dianping-gozero/discussions)
 
 ### 社交媒体
 
@@ -1828,8 +1828,8 @@ git push origin feature/your-feature-name
 遇到问题？请按以下步骤：
 
 1. 查看 [常见问题](#常见问题)
-2. 搜索 [已有 Issues](https://github.com/yourusername/dianping-gozero/issues)
-3. 如果都没有，[创建新 Issue](https://github.com/yourusername/dianping-gozero/issues/new)
+2. 搜索 [已有 Issues](https://github.com/me-cs/dianping-gozero/issues)
+3. 如果都没有，[创建新 Issue](https://github.com/me-cs/dianping-gozero/issues/new)
 
 **提问时请包含**：
 - 问题描述
@@ -1870,13 +1870,17 @@ git push origin feature/your-feature-name
 
 ## 📊 项目统计
 
-![GitHub stars](https://img.shields.io/github/stars/yourusername/dianping-gozero?style=social)
-![GitHub forks](https://img.shields.io/github/forks/yourusername/dianping-gozero?style=social)
-![GitHub watchers](https://img.shields.io/github/watchers/yourusername/dianping-gozero?style=social)
+![GitHub stars](https://img.shields.io/github/stars/me-cs/dianping-gozero?style=social)
+![GitHub forks](https://img.shields.io/github/forks/me-cs/dianping-gozero?style=social)
+![GitHub watchers](https://img.shields.io/github/watchers/me-cs/dianping-gozero?style=social)
 
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/yourusername/dianping-gozero)
-![GitHub last commit](https://img.shields.io/github/last-commit/yourusername/dianping-gozero)
-![GitHub contributors](https://img.shields.io/github/contributors/yourusername/dianping-gozero)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/me-cs/dianping-gozero)
+![GitHub last commit](https://img.shields.io/github/last-commit/me-cs/dianping-gozero)
+![GitHub contributors](https://img.shields.io/github/contributors/me-cs/dianping-gozero)
+
+### Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=me-cs/dianping-gozero&type=Date)](https://star-history.com/#me-cs/dianping-gozero&Date)
 
 ---
 
