@@ -2,6 +2,8 @@
 
 <div align="center">
 
+![CI](https://github.com/me-cs/dianping-gozero/actions/workflows/ci.yml/badge.svg)
+![Docker Build](https://github.com/me-cs/dianping-gozero/actions/workflows/docker.yml/badge.svg)
 ![Go Version](https://img.shields.io/badge/Go-1.23+-00ADD8?style=flat&logo=go)
 ![go-zero](https://img.shields.io/badge/go--zero-1.9.4-7C3AED?style=flat)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker)
@@ -22,19 +24,24 @@
 
 ## 📚 目录
 
-- [项目简介](#-项目简介)
-- [技术栈](#-技术栈)
-- [架构设计](#-架构设计)
-- [数据库设计](#-数据库设计)
-- [环境准备（新手必读）](#-环境准备新手必读)
-- [快速开始](#-快速开始)
-- [部署指南](#-部署指南)
-- [开发指南](#-开发指南)
-- [调试与故障排查](#-调试与故障排查)
-- [学习路径](#-学习路径)
-- [贡献指南](#-贡献指南)
-- [法律声明](#️-法律声明)
-- [致谢](#-致谢)
+- [项目简介](#项目简介)
+- [技术栈](#技术栈)
+- [架构设计](#架构设计)
+- [数据库设计](#数据库设计)
+- [环境准备（新手必读）](#环境准备新手必读)
+- [快速开始](#快速开始)
+- [部署指南](#部署指南)
+- [开发指南](#开发指南)
+- [调试与故障排查](#调试与故障排查)
+- [学习路径](#学习路径)
+- [贡献指南](#贡献指南)
+- [法律声明](#法律声明)
+- [致谢](#致谢)
+- [支持项目](#支持项目)
+- [联系我们](#联系我们)
+- [路线图](#路线图)
+- [项目统计](#项目统计)
+- [许可证](#许可证)
 
 ---
 
@@ -1850,6 +1857,7 @@ git push origin feature/your-feature-name
 - [x] 分布式追踪和监控
 - [x] 完整文档
 - [x] Dependabot 自动依赖更新
+- [x] GitHub Actions CI/CD 流水线
 
 ### v2.0 (计划中)
 
@@ -1857,7 +1865,6 @@ git push origin feature/your-feature-name
 - [ ] 管理后台
 - [ ] 单元测试覆盖率 >80%
 - [ ] K8s 部署方案
-- [ ] CI/CD 流水线
 - [ ] 文件上传迁移到 MinIO 对象存储
 
 ### v3.0 (未来)
