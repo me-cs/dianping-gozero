@@ -10,7 +10,7 @@
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat)
 ![AI Powered](https://img.shields.io/badge/90%25_Built_by-Claude_AI-FF6B6B?style=flat)
 
-**🎓 一个完整的 Go 微服务学习项目 | 大众点评克隆版后端**
+**🎓 一个完整的 Go 微服务学习项目 | 黑马点评克隆版后端**
 
 [English](./README_EN.md) | [快速开始](#-快速开始) | [在线文档](./docs) | [贡献指南](#-贡献指南)
 
@@ -40,7 +40,7 @@
 
 ## 🎯 项目简介
 
-**DianPing Clone** 是一个基于 **go-zero** 微服务框架构建的大众点评克隆版后端系统，专为学习和实践现代微服务架构而设计。
+**DianPing Clone** 是一个基于 **go-zero** 微服务框架构建的黑马点评克隆版后端系统，专为学习和实践现代微服务架构而设计。
 
 ### ✨ 项目亮点
 
@@ -1687,9 +1687,9 @@ git push origin feature/your-feature-name
    - 项目名称、界面设计等可能涉及商标权
 
 2. **知识产权**
-   - 本项目参考了大众点评的业务模型
+   - 本项目参考了黑马点评的业务模型
    - 所有商标、服务标志归其各自所有者
-   - 本项目不隶属于大众点评或美团
+   - 本项目不隶属于黑马点评或美团
 
 3. **数据安全**
    - 请勿使用真实用户数据
@@ -1907,7 +1907,3 @@ Made with ❤️ by Claude AI & Developers
 [回到顶部](#-dianping-clone---go-微服务实战项目)
 
 </div>
-#   d i a n p i n g - g o z e r o  
- # dianping-gozero
-# dianping-gozero
-# dianping-gozero
