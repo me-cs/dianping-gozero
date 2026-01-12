@@ -3,7 +3,6 @@ module github.com/me-cs/dianping-gozero
 go 1.25.5
 
 require (
-	github.com/farmerx/gorsa v0.0.0-20161211100049-3ae06f674f40
 	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/google/uuid v1.6.0
 	github.com/homelight/json v1.18.5
