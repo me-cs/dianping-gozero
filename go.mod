@@ -8,7 +8,7 @@ require (
 	github.com/homelight/json v1.18.5
 	github.com/thinkeridea/go-extend v1.3.2
 	github.com/zeromicro/go-zero v1.10.0
-	google.golang.org/grpc v1.79.1
+	google.golang.org/grpc v1.79.3
 	google.golang.org/protobuf v1.36.11
 )
 
