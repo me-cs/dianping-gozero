@@ -25,7 +25,7 @@
 ### 原始 Dockerfile 模板（多阶段构建）
 
 ```dockerfile
-FROM golang:1.26-alpine AS builder
+FROM golang:1.27-alpine AS builder
 
 LABEL stage=gobuilder
 
